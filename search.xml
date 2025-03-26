@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<search> 
+  
+  
+    
+    <entry>
+      <title>pwn_study_note</title>
+      <link href="/2025/03/25/pwn-study-note/"/>
+      <url>/2025/03/25/pwn-study-note/</url>
+      
+        <content type="html"><![CDATA[<h4 id="GDB-动调基础"><a href="#GDB-动调基础" class="headerlink" title="GDB 动调基础"></a>GDB 动调基础</h4><ul><li><code>RIP</code>: 存放当前执行的指令地址</li><li><code>RSP</code> : 栈顶指针</li><li><code>RBP</code>: 栈底指针</li><li><code>RAX</code>: 通用寄存器</li><li><code>zf</code>: Zero Flag 寄存器<br>INTEL 指令集</li></ul><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">set disassembly-flavor intel</span><br></pre></td></tr></table></figure><h4 id="Assembly-一般指令"><a href="#Assembly-一般指令" class="headerlink" title="Assembly 一般指令"></a>Assembly 一般指令</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">sub rsp, 0x18  ;rsp = [rsp-0x18]</span><br><span class="line">mov rax, rbp   ;rax = rbp</span><br><span class="line">lea rax, [rbp-0x18]   ;与上面的操作相同, lea可以当作运算指令, 运算结束后赋值给rax  (优点：指令断，不用重新赋值rbp)</span><br><span class="line">xor ebx, ebx   ;ebx = 0 / mov ebx, 0</span><br><span class="line">call xxxx    ;调用一个子程序</span><br><span class="line"></span><br><span class="line">cmp al, 0x61   ;一般下面会跟je/jne，cmp就相当于sub指令，al-0x61，但是结果不保存，与下面的jne/je进行比较</span><br><span class="line">(ax,bx = 3, cmp ax,bx) 3-3=0 ，zf寄存器为1；相反的如果cmp两个数相减不等于0，那zf就等于0</span><br><span class="line">jne xxxxx   ;zf标志位不为0则跳转</span><br><span class="line">jn xxxx   ;zf标志位为0时跳转</span><br><span class="line">test eax, eax    ;当作cmp eax,0使用    eax&amp;eax, 相与, 相等相当于and eax,eax 但是不存储</span><br></pre></td></tr></table></figure><h4 id="gdb-一般操作"><a href="#gdb-一般操作" class="headerlink" title="gdb 一般操作"></a>gdb 一般操作</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">run  直接运行程序 / start  开始调试程序 gdb会自动断到分析处的main函数处 (rip指向main)</span><br><span class="line">disassembly $rip  在rip处反汇编</span><br><span class="line">b  设置断点 , b *0x00005555555527a</span><br><span class="line">d num  删除断点</span><br><span class="line">disable b num  使断点失效</span><br><span class="line">enable b num  重新启用断点</span><br><span class="line">i b  查看设置的断点</span><br><span class="line">i r  查看所有寄存器</span><br><span class="line">c  continue 执行到断点</span><br><span class="line">ni   单步执行(步过)</span><br><span class="line">si   单步步入</span><br><span class="line">finish   步出</span><br><span class="line">p $rbp    print</span><br><span class="line">x/10i $rip   以汇编的方式查看$rip内存地址开始的下10行</span><br><span class="line">x/20b $rbp-0x10     ;b=byte</span><br><span class="line">x/20gx $rbp</span><br><span class="line">set *0x7fffffffd7c0=0x61    设置内存数据</span><br><span class="line">set *((unsigned int)$ebp)=0x61</span><br><span class="line"></span><br></pre></td></tr></table></figure><h4 id="pwntools库-一般操作"><a href="#pwntools库-一般操作" class="headerlink" title="pwntools库 一般操作"></a>pwntools库 一般操作</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">本地建立socat</span><br><span class="line">socat TCP-LISTEN:8877,fork exec:./question_1_plus_x64,reuseaddr</span><br></pre></td></tr></table></figure><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> socket</span><br><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"><span class="keyword">import</span> struct</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">pwn</span>():</span><br><span class="line">    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)</span><br><span class="line">    </span><br><span class="line">    s.connect((<span class="string">&quot;127.0.0.1&quot;</span>, <span class="number">8877</span>))</span><br><span class="line">    payload = <span class="string">b&#x27;P&#x27;</span> * <span class="number">8</span> + <span class="string">b&#x27;\x10&#x27;</span> <span class="comment"># ATTENTION BYTE</span></span><br><span class="line">    s.sendall(payload + <span class="string">b&#x27;\n&#x27;</span>)</span><br><span class="line"></span><br><span class="line">    conn = remote(<span class="string">&#x27;127.0.0.1&#x27;</span>, <span class="number">8877</span>)</span><br><span class="line">    conn.sock = s</span><br><span class="line">    conn.interactive()</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__  == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    pwn()</span><br></pre></td></tr></table></figure>]]></content>
+      
+      
+      
+        <tags>
+            
+            <tag> pwn </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>Test</title>
+      <link href="/2025/03/25/Test/"/>
+      <url>/2025/03/25/Test/</url>
+      
+        <content type="html"><![CDATA[<p>Test</p><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br></pre></td></tr></table></figure><p>The First Post, 2025&#x2F;03&#x2F;25<br><code>Yes</code></p>]]></content>
+      
+      
+      
+        <tags>
+            
+            <tag> Test </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+  
+  
+</search>
