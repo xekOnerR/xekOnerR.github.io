@@ -1669,3 +1669,13 @@ code {
   vertical-align: top;
   font-family: monospace;
 }
+/* 仅强制显示导航菜单，100%保持原位置 */
+#menu #nav {
+  display: inline !important; /* 保持内联布局 */
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+/* 确保不影响其他元素 */
+#header-post {
+  transform: none !important;
+}
