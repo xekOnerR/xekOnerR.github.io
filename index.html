@@ -56,6 +56,8 @@
     
 	<!-- mathjax -->
 	
+    <!-- Typed.js 打字机效果 -->
+    <script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.11"></script>
 <meta name="generator" content="Hexo 7.3.0"></head>
 
 <body class="max-width mx-auto px3 ltr">
@@ -95,10 +97,26 @@
 
         
         <section id="about" class="p-note">
-  
-    <p>昭昭如愿, 岁岁安澜</p>
+    
+        <!-- 添加一个空的容器用于 Typed.js 渲染 -->
+        <div id="typed-text"></div>
 
-  
+        <!-- 初始化 Typed.js -->
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                new Typed('#typed-text', {
+                    strings: ["昭昭如愿, 岁岁安澜"], // 从 _config.yml 读取
+                    startDelay: 0,//开始的延迟
+                    typeSpeed: 250,//打字速度
+                    backSpeed: 150,//回退速度
+                    loop: true,//是否循环
+                    showCursor: true,//显示游标
+                    cursorChar: '_',
+                    shuffle: false//是否随机
+                });
+            });
+        </script>
+    
   
     <p>
       Find me on

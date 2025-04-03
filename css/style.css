@@ -1662,3 +1662,10 @@ code {
 #header-post #actions {
   direction: ltr !important;
 }
+/* 修复Typed.js光标位置 */
+#typed-text,
+.typed-cursor {
+  display: inline;
+  vertical-align: top;
+  font-family: monospace;
+}
